@@ -50,28 +50,18 @@
   ],
   "screenshots": [
     {
-      "src": "/screenshots/mobile.png",
+      "src": "screenshots/mobile.png",
       "type": "image/png",
       "sizes": "1024x1024",
       "form_factor": "narrow",
       "label": "Vista móvil de mi aplicación"
     },
     {
-      "src": "/screenshots/desktop.png",
+      "src": "screenshots/desktop.png",
       "type": "image/png",
       "sizes": "1024x1024",
       "form_factor": "wide",
       "label": "Vista de escritorio de mi aplicación"
-    }
-  ],
-  "protocol_handlers": [
-    {
-      "protocol": "web+myapp",
-      "url": "/share?url=%s"
-    },
-    {
-      "protocol": "web+portal",
-      "url": "/portal/%s"
     }
   ]
 }
