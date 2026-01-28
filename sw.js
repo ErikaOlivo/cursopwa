@@ -4,8 +4,8 @@
 importScripts('js/sw-utils.js');
 
 
-const STATIC_CACHE = 'static-v3';
-const DYNAMIC_CACHE = 'dynamic-v3';
+const STATIC_CACHE = 'static-v4';
+const DYNAMIC_CACHE = 'dynamic-v4';
 const INMUTABLE_CACHE = 'inmutable-v1';
 
 const APP_SHELL = [
@@ -24,7 +24,7 @@ const APP_SHELL = [
 
 
 const APP_SHELL_INMUTABLE = [
-  'https://fonts.googleapis.com/css2?family=Quicksand:300,400&family=Lato:300,400&display=swap',
+  'https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400&family=Lato:wght@300;400&display=swap',
   'https://use.fontawesome.com/releases/v5.3.1/css/all.css',
   'css/animate.css',
   'js/libs/jquery.js'
@@ -71,14 +71,26 @@ self.addEventListener('fetch', e => {
   const respuesta = caches.match(e.request)
     .then(res => {
       if (res) {
+        // Cache First: retornar inmediatamente desde cache
         return res;
-      } else {
-        // console.log( e.request.url );
-        return fetch(e.request).then(newRes => {
-          return actualizarCacheDinamico(DYNAMIC_CACHE, e.request, newRes);
-        });
       }
 
+      // Si no está en cache, fetch y guardar
+      return fetch(e.request)
+        .then(newRes => {
+          // Solo cachear respuestas exitosas
+          if (!newRes || newRes.status !== 200 || newRes.type === 'error') {
+            return newRes;
+          }
+
+          return actualizarCacheDinamico(DYNAMIC_CACHE, e.request, newRes);
+        })
+        .catch(err => {
+          // Fallback para imágenes offline
+          if (e.request.destination === 'image') {
+            return caches.match('img/favicon.ico');
+          }
+        });
     });
 
   e.respondWith(respuesta);
